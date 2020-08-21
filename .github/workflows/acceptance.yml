@@ -136,9 +136,11 @@ jobs:
               -e REDIS_HOST=sentry_redis \
               -e REDIS_PORT=6379 \
               -e REDIS_DB=1 \
-              --network sentry \
+              --name snuba \
               snuba
             docker ps
+            docker network ls
+            docker inspect snuba
 
         - name: webpack
           run: |
