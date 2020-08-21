@@ -36,7 +36,11 @@ jobs:
       steps:
         # Checkout codebase
         - uses: actions/checkout@v2
+
+        - name: Checkout Sentry
+          uses: actions/checkout@v2
           with:
+            path: sentry
             repository: getsentry/sentry
 
         # Install node
@@ -79,7 +83,7 @@ jobs:
         # setup pip
         - name: Install pip
           run: |
-            pip install --no-cache-dir --upgrade "pip>=20.0.2"
+            cd sentry && pip install --no-cache-dir --upgrade "pip>=20.0.2"
 
         # pip cache
         - name: Get pip cache dir
@@ -102,13 +106,13 @@ jobs:
 
         - name: Install Javascript Dependencies
           run: |
-            yarn install --frozen-lockfile
+            cd sentry && yarn install --frozen-lockfile
 
         - name: Install Python Dependencies
           env:
             PGPASSWORD: postgres
           run: |
-            python setup.py install_egg_info
+            cd sentry && python setup.py install_egg_info
             pip install wheel # GitHub Actions does not have this installed by default (unlike Travis)
             pip install -U -e ".[dev]"
 
@@ -116,24 +120,27 @@ jobs:
           run: |
             sentry init
             sentry devservices up postgres redis clickhouse
+
+        - name: Start snuba
+          run: |
             docker build -t snuba .
             docker run -it snuba
 
         - name: webpack
           run: |
-            yarn webpack --display errors-only
+            cd sentry && yarn webpack --display errors-only
 
         # Setup custom pytest matcher, see https://github.com/actions/setup-node/issues/97
-        - name: Add pytest log matcher
-          if: always()
-          run: |
-            echo "::remove-matcher owner=pytest::"
-            echo "::add-matcher::.github/pytest.json"
+        # - name: Add pytest log matcher
+          # if: always()
+          # run: |
+            # echo "::remove-matcher owner=pytest::"
+            # echo "::add-matcher::.github/pytest.json"
 
         - name: Run acceptance tests (#${{ steps.config.outputs.matrix-instance-number }} of ${{ strategy.job-total }})
           if: always()
           run: |
-            make run-acceptance
+            cd sentry && make run-acceptance
           env:
             USE_SNUBA: 1
             TEST_GROUP: ${{ matrix.instance }}
