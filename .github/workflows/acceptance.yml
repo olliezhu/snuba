@@ -138,6 +138,7 @@ jobs:
               --name sentry_snuba \
               --network sentry \
               snuba
+            docker exec -d sentry_snuba snuba migrate
             docker ps
             docker inspect sentry_snuba
             docker inspect sentry
