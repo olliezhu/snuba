@@ -122,9 +122,11 @@ jobs:
             sentry devservices up postgres redis clickhouse
 
         - name: Start snuba
+          env:
+            SNUBA_SETTINGS: docker
           run: |
             docker build -t snuba .
-            docker run -d --rm -p 1218:1218 snuba
+            docker run -d --rm -p 127.0.0.1:1218:1218 snuba
             docker ps
 
         - name: webpack
