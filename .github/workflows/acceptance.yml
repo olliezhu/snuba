@@ -125,6 +125,7 @@ jobs:
           run: |
             docker build -t snuba .
             docker run -d --rm -p 1218:1218 snuba
+            docker ps
 
         - name: webpack
           run: |
