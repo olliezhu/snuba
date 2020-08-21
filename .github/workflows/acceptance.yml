@@ -124,18 +124,11 @@ jobs:
         - name: Start snuba
           run: |
             docker build -t snuba .
-            docker run -d --rm snuba
+            docker run -d --rm -p 1218:1218 snuba
 
         - name: webpack
           run: |
             cd sentry && yarn webpack --display errors-only
-
-        # Setup custom pytest matcher, see https://github.com/actions/setup-node/issues/97
-        # - name: Add pytest log matcher
-          # if: always()
-          # run: |
-            # echo "::remove-matcher owner=pytest::"
-            # echo "::add-matcher::.github/pytest.json"
 
         - name: Run acceptance tests (#${{ steps.config.outputs.matrix-instance-number }} of ${{ strategy.job-total }})
           run: |
@@ -143,4 +136,3 @@ jobs:
           env:
             USE_SNUBA: 1
             TEST_GROUP: ${{ matrix.instance }}
-
