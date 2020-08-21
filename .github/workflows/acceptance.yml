@@ -124,7 +124,7 @@ jobs:
         - name: Start snuba
           run: |
             docker build -t snuba .
-            docker run -it snuba
+            docker run -d --rm snuba
 
         - name: webpack
           run: |
@@ -138,7 +138,6 @@ jobs:
             # echo "::add-matcher::.github/pytest.json"
 
         - name: Run acceptance tests (#${{ steps.config.outputs.matrix-instance-number }} of ${{ strategy.job-total }})
-          if: always()
           run: |
             cd sentry && make run-acceptance
           env:
