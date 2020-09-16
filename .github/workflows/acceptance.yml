@@ -14,11 +14,16 @@ jobs:
 
       - name: Configure auth
         run: |
-          # mkdir -p $HOME/.docker
+          mkdir -p $HOME/.docker
           # echo '{"experimental": "enabled"}' > $HOME/.docker/config.json
           gcloud auth configure-docker --quiet
 
-      - run: gcloud container images list-tags gcr.io/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}:${{ github.event.pull_request.head_sha }}
+      - env:
+          ENV_CONTEXT: ${{ toJson(env) }}
+        run: |
+          echo "$CONTEXT"
+          gcloud container images list-tags gcr.io/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}:${{ github.event.pull_request.head_sha }}
+          gcloud container images list-tags gcr.io/sentryio/snuba:${{ github.event.pull_request.head_sha }}
 
     acceptance:
       runs-on: ubuntu-16.04
