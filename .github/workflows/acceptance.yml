@@ -133,7 +133,7 @@ jobs:
 
         - name: Start snuba
           run: |
-            python -m pip install virtualenv
+            # python -m pip install virtualenv
             python -m virtualenv .venv
             source .venv/bin/activate
             make install-python-dependencies
