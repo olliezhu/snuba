@@ -137,6 +137,7 @@ jobs:
           run: |
             python -m virtualenv .venv
             source .venv/bin/activate
+            ls .venv/bin/activate
             make install-python-dependencies
             snuba api &
             # docker build -t snuba .
