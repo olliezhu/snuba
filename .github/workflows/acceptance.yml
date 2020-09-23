@@ -120,7 +120,18 @@ jobs:
               ${{ runner.os }}-pip-
 
         # Checkout codebase
-        - uses: actions/checkout@v2
+        - name: Checkout snuba
+          uses: actions/checkout@v2
+
+        - name: Build snuba docker image
+          run: |
+            # python -m virtualenv .venv
+            # source .venv/bin/activate
+            # ls .venv/bin/activate
+            # make install-python-dependencies
+            # snuba api &
+            ls -la
+            docker build -t snuba -f Dockerfile.test .
 
         - name: Checkout Sentry
           uses: actions/checkout@v2
@@ -145,14 +156,6 @@ jobs:
           run: |
             sentry init
             sentry devservices up postgres redis clickhouse
-
-        - run: |
-            # python -m virtualenv .venv
-            # source .venv/bin/activate
-            # ls .venv/bin/activate
-            # make install-python-dependencies
-            # snuba api &
-            docker build -t snuba -f Dockerfile.test .
 
         - name: Start snuba
           run: |
