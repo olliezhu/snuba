@@ -133,6 +133,19 @@ jobs:
           run: |
             cd sentry && yarn install --frozen-lockfile
 
+        - name: Setup sentry
+          env:
+            PGPASSWORD: postgres
+          run: |
+            cd sentry && python setup.py install_egg_info
+            pip install wheel # GitHub Actions does not have this installed by default (unlike Travis)
+            pip install -U -e ".[dev]"
+
+        - name: Start devservices
+          run: |
+            sentry init
+            sentry devservices up postgres redis clickhouse
+
         - name: Start snuba
           run: |
             # python -m virtualenv .venv
@@ -156,19 +169,6 @@ jobs:
               --network sentry \
               snuba
             docker exec -d sentry_snuba snuba migrate --force
-
-        - name: Setup sentry
-          env:
-            PGPASSWORD: postgres
-          run: |
-            cd sentry && python setup.py install_egg_info
-            pip install wheel # GitHub Actions does not have this installed by default (unlike Travis)
-            pip install -U -e ".[dev]"
-
-        - name: Start devservices
-          run: |
-            sentry init
-            sentry devservices up postgres redis clickhouse
 
         - name: webpack
           run: |
