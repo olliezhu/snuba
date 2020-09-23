@@ -146,14 +146,16 @@ jobs:
             sentry init
             sentry devservices up postgres redis clickhouse
 
-        - name: Start snuba
-          run: |
+        - run: |
             # python -m virtualenv .venv
             # source .venv/bin/activate
             # ls .venv/bin/activate
             # make install-python-dependencies
             # snuba api &
             docker build -t snuba -f Dockerfile.test .
+
+        - name: Start snuba
+          run: |
             docker run -d --rm \
               -p 127.0.0.1:1218:1218 \
               -e PYTHONUNBUFFERED=1 \
@@ -168,7 +170,9 @@ jobs:
               --name sentry_snuba \
               --network sentry \
               snuba
-            docker exec -d sentry_snuba snuba migrate --force
+            docker logs sentry_snuba
+
+        - run: docker exec -d sentry_snuba snuba migrate --force
 
         - name: webpack
           run: |
