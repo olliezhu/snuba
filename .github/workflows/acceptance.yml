@@ -131,13 +131,7 @@ jobs:
 
         - name: Build snuba docker image
           run: |
-            # python -m virtualenv .venv
-            # source .venv/bin/activate
-            # ls .venv/bin/activate
-            # make install-python-dependencies
-            # snuba api &
-            ls -la
-            docker build -t snuba -f Dockerfile.test .
+            docker build -t snuba -f Dockerfile .
 
         - name: Checkout Sentry
           uses: actions/checkout@v2
@@ -182,6 +176,12 @@ jobs:
             docker logs sentry_snuba
 
         - run: docker exec -d sentry_snuba snuba migrate --force
+
+        - run: docker inspect sentry_snuba
+
+        - run: docker inspect sentry
+
+        - run: docker ps -a
 
         - name: webpack
           run: |
