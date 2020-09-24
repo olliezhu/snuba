@@ -174,7 +174,7 @@ jobs:
               --network sentry \
               snuba
 
-        # - run: docker exec -d sentry_snuba snuba migrate --force
+        - run: docker exec -d sentry_snuba snuba migrations migrate --force
 
         - run: docker inspect sentry_snuba
 
@@ -194,4 +194,4 @@ jobs:
             cd sentry && make run-acceptance
 
         - run: docker logs sentry_snuba
-          continue-on-error: true
+          if: always()
