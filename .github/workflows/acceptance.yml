@@ -173,7 +173,6 @@ jobs:
               --name sentry_snuba \
               --network sentry \
               snuba
-            docker logs sentry_snuba
 
         # - run: docker exec -d sentry_snuba snuba migrate --force
 
@@ -188,8 +187,11 @@ jobs:
             cd sentry && yarn webpack --display errors-only
 
         - name: Run acceptance tests (#${{ steps.config.outputs.matrix-instance-number }} of ${{ strategy.job-total }})
-          run: |
-            cd sentry && make run-acceptance
           env:
             USE_SNUBA: 1
             TEST_GROUP: ${{ matrix.instance }}
+          run: |
+            cd sentry && make run-acceptance
+
+        - run: docker logs sentry_snuba
+          continue-on-error: true
