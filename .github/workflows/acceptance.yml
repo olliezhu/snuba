@@ -175,7 +175,7 @@ jobs:
               snuba
             docker logs sentry_snuba
 
-        - run: docker exec -d sentry_snuba snuba migrate --force
+        # - run: docker exec -d sentry_snuba snuba migrate --force
 
         - run: docker inspect sentry_snuba
 
