@@ -241,7 +241,7 @@ jobs:
           with:
             path: sentry
             repository: getsentry/sentry
-
+            ref: test/snuba/testing-snuba-integration
 
         - name: Install Javascript Dependencies
           run: |
