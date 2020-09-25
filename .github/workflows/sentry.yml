@@ -122,11 +122,16 @@ jobs:
 
         - run: docker exec sentry_snuba snuba migrations migrate --force
 
+        - run: |
+          docker ps -a
+          docker inspect sentry_kafka
+          docker inspect sentry_zookeeper
+
         - name: Run tests
           env:
             USE_SNUBA: 1
           run: |
-            cd sentry && make test-snuba
+            cd sentry && py.test tests/sentry/eventstream/kafka/test_consumer.py
 
     acceptance:
       runs-on: ubuntu-16.04
