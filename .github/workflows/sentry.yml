@@ -16,7 +16,7 @@ jobs:
 
         # services configuration
         SENTRY_KAFKA_HOSTS: 127.0.0.1:9092
-        SENTRY_ZOOKEEPER_HOSTS: sentry_zookeeper:2182
+        SENTRY_ZOOKEEPER_HOSTS: 127.0.0.1:2182
         SENTRY_REDIS_HOST: sentry_redis
         # The hostname used to communicate with the PostgreSQL from sentry
         DATABASE_URL: postgresql://postgres:postgres@localhost/sentry
@@ -120,8 +120,8 @@ jobs:
               --name sentry_snuba \
               --network sentry \
               snuba
+            docker exec sentry_snuba snuba migrations migrate --force
 
-        - run: docker exec sentry_snuba snuba migrations migrate --force
         - run: docker ps -a
         - run: docker inspect sentry_kafka
         - run: docker inspect sentry_zookeeper
@@ -155,13 +155,14 @@ jobs:
 
         # services configuration
         SENTRY_KAFKA_HOSTS: 127.0.0.1:9092
-        SENTRY_ZOOKEEPER_HOSTS: sentry_zookeeper:2182
+        SENTRY_ZOOKEEPER_HOSTS: 127.0.0.1:2182
         SENTRY_REDIS_HOST: sentry_redis
         # The hostname used to communicate with the PostgreSQL from sentry
         DATABASE_URL: postgresql://postgres:postgres@localhost/sentry
 
         # Number of matrix instances
         TOTAL_TEST_GROUPS: ${{ strategy.job-total }}
+        TEST_GROUP_STRATEGY: individual
 
       steps:
         - name: Install System Dependencies
@@ -280,8 +281,7 @@ jobs:
               --name sentry_snuba \
               --network sentry \
               snuba
-
-        - run: docker exec sentry_snuba snuba migrations migrate --force
+            docker exec sentry_snuba snuba migrations migrate --force
 
         - name: webpack
           run: |
